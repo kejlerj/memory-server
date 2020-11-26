@@ -1,11 +1,13 @@
-const express = require('express')
-var visitor = require("../controllers/visitors")
+const express = require('express');
+const visitor = require('../controllers/visitors');
+const validator = require('../validators/validateVisitor');
+const tokens = require('../utils/tokens')
 
-const router = express.Router()
+const router = express.Router();
 
-router.post('/score', visitor.score)
-router.get('/leaderboard', visitor.leaderboard)
-router.get('/*', visitor.menu)
+router.post('/game', validator.validateLaunch, visitor.launch);
+router.post('/game/:gameID/action', tokens.verifyToken, validator.validateAction, visitor.action);
+router.get('/leaderboard', visitor.leaderboard);
+router.get('/*', visitor.menu);
 
-
-module.exports = router
+module.exports = router;
