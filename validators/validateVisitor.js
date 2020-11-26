@@ -7,7 +7,7 @@ exports.validateLaunch = [
             validationResult(req).throw();
             next();
         } catch (err) {
-            console.log(err);
+            console.log(err.mapped());
             return res.status(400).send();
         }
     },

@@ -6,11 +6,21 @@ const Card = require('../models/Card.js');
 const tokens = require('../utils/tokens.js');
 
 exports.menu = (req, res, next) => {
-    res.sendFile(path.join(__dirname, '../build', 'index.html'));
+    try {
+        res.sendFile(path.join(__dirname, '../build', 'index.html'));
+    } catch (err) {
+        console.log(err);
+        res.status(400).send();
+    }
 };
 
 exports.notFound = (req, res, next) => {
-    res.status(404).send('404 : Page not found');
+    try {
+        res.status(404).send('404 : Page not found');
+    } catch (err) {
+        console.log(err);
+        res.status(400).send();
+    }
 };
 
 exports.leaderboard = async (req, res, next) => {
