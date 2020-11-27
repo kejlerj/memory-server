@@ -173,7 +173,8 @@ const checkCards = async (cardIndex, card2, gameID) => {
             ]);
 
             // Check victory
-            if (isVictory(gameID)) await saveEndtime(gameID);
+	    let victory = await isVictory(gameID)
+            if (victory === true) await saveEndtime(gameID);
         } else await setStatus(gameID, card2.index, 'HIDDEN');
     } else await setStatus(gameID, cardIndex, 'VISIBLE');
 };
