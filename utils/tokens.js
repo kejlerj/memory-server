@@ -13,6 +13,7 @@ const generateToken = (userId) => {
 
 const verifyToken = async (req, res, next) => {
     try {
+        if (!req.headers.authorization) throw 'Error: Token missing';
         const token = req.headers.authorization.split(' ')[1];
         jwt.verify(token, process.env.TOKEN_SECRET);
         next();
