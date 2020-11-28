@@ -121,14 +121,13 @@ const genScore = async (gameID) => {
 
     let game = await Game.findOne({ id: gameID });
     let clicks = game.nbClick;
-    let count = (game.endTime.getTime() - game.startTime.getTime()) / 1000;
-    console.log(count);
+    let count = Math.floor((game.endTime.getTime() - game.startTime.getTime()) / 1000);
 
     score -= (clicks - min_clicks) * click_pts;
     score -= (count - min_time) * time_pts;
-    if (score < 0) score = 0;
-    if (score > 1000) score = 1000;
-    Player.updateOne({ _id: game.player }, { $set: { score: score } });
+    if (score < 0 || score > 1000)
+	    throw 'Invalid score'
+    Player.updateOne({ _id: game.player }, { $set: { score: score } })
 };
 
 const isVictory = async (gameID) => {
@@ -201,18 +200,3 @@ exports.action = async (req, res, next) => {
     }
 };
 
-// /launch
-
-// genere un token
-// si chrono depasse 220 secondes --> remove token & id
-
-// /action:id
-
-// check victory
-// gen score if victory
-
-// ----------------
-// bouton restart refait un launch
-
-// en react appeler /delete/:id dans useeffect a la destruction du component : return () => fetch...
-//
