@@ -4,6 +4,7 @@ const Game = require('../models/Game.js');
 const Player = require('../models/Player.js');
 const Card = require('../models/Card.js');
 const tokens = require('../utils/tokens.js');
+const { type } = require('os');
 
 exports.menu = (req, res, next) => {
     try {
@@ -118,16 +119,16 @@ const genScore = async (gameID) => {
     let time_pts = 5;
     let click_pts = 20;
     let score = 1000;
-
     let game = await Game.findOne({ id: gameID });
     let clicks = game.nbClick;
-    let count = Math.floor((game.endTime.getTime() - game.startTime.getTime()) / 1000);
+    let count = Math.floor(
+        (game.endTime.getTime() - game.startTime.getTime()) / 1000
+    );
 
     score -= (clicks - min_clicks) * click_pts;
     score -= (count - min_time) * time_pts;
-    if (score < 0 || score > 1000)
-	    throw 'Invalid score'
-    Player.updateOne({ _id: game.player }, { $set: { score: score } })
+    if (score < 0 || score > 1000) throw 'Invalid score';
+    Player.updateOne({ _id: game.player }, { $set: { score: score } }).exec();
 };
 
 const isVictory = async (gameID) => {
@@ -172,7 +173,7 @@ const checkCards = async (cardIndex, card2, gameID) => {
             ]);
 
             // Check victory
-	    let victory = await isVictory(gameID)
+            let victory = await isVictory(gameID);
             if (victory === true) await saveEndtime(gameID);
         } else await setStatus(gameID, card2.index, 'HIDDEN');
     } else await setStatus(gameID, cardIndex, 'VISIBLE');
@@ -192,6 +193,7 @@ exports.action = async (req, res, next) => {
         await res.status(200).json({
             field: field,
             nbClick: game.nbClick,
+            count: Math.floor((Date.now() - game.startTime.getTime()) / 1000),
             isVictory: game.endTime !== null,
         });
     } catch (err) {
@@ -199,4 +201,3 @@ exports.action = async (req, res, next) => {
         res.status(400).send();
     }
 };
-
